@@ -1,0 +1,31 @@
+{
+  "name": "austropromo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cinematic AustroClash promotional video production with Remotion.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.17.0"
+  },
+  "scripts": {
+    "preview": "node scripts/remotion.mjs studio src/index.ts --ipv4 --no-open --port=3000",
+    "render": "npm run ensure:out && node scripts/remotion.mjs render src/index.ts AustroClashShort out/austroclash-short.mp4 --codec=h264 --pixel-format=yuv420p --color-space=bt709 --crf=18 --concurrency=2 --log=error",
+    "render:short": "npm run ensure:out && node scripts/remotion.mjs render src/index.ts AustroClashShort out/austroclash-short-test.mp4 --frames=0-59 --codec=h264 --pixel-format=yuv420p --color-space=bt709 --crf=18 --concurrency=2 --log=error",
+    "test-frame": "npm run ensure:out && node scripts/remotion.mjs still src/index.ts AustroClashShort out/test-frame.png --frame=900 --log=error",
+    "typecheck": "tsc --noEmit",
+    "ensure:out": "node scripts/ensure-output-dir.mjs"
+  },
+  "dependencies": {
+    "@fontsource/barlow-condensed": "5.3.0",
+    "@remotion/cli": "4.0.533",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.533"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^153.0.0",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7",
+    "typescript": "5.9.3"
+  }
+}
