@@ -1,0 +1,54 @@
+name: Render promotional video
+
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: Remotion composition to render
+        required: true
+        type: choice
+        default: AustroClashShort
+        options:
+          - AustroClashShort
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: Render ${{ inputs.composition }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Render MP4 (CPU)
+        env:
+          REMOTION_COMPOSITION: ${{ inputs.composition }}
+        run: >-
+          node scripts/remotion.mjs render src/index.ts "$REMOTION_COMPOSITION"
+          out/austroclash-short.mp4
+          --codec=h264
+          --pixel-format=yuv420p
+          --color-space=bt709
+          --crf=18
+          --concurrency=2
+          --log=error
+
+      - name: Upload rendered MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: austroclash-short-mp4
+          path: out/austroclash-short.mp4
+          if-no-files-found: error
+          retention-days: 14
